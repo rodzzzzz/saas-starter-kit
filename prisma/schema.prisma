@@ -1,0 +1,59 @@
+// Prisma schema for SaaS starter kit with Supabase
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model synced with Clerk
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscription Subscription?
+  usage        Usage[]
+
+  @@index([clerkId])
+  @@index([email])
+}
+
+// Subscription model for Stripe
+model Subscription {
+  id                   String    @id @default(uuid())
+  userId               String    @unique
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId     String    @unique
+  stripeSubscriptionId String?   @unique
+  stripePriceId        String?
+  stripeCurrentPeriodEnd DateTime?
+  status               String    @default("inactive") // active, canceled, past_due, etc.
+  plan                 String    @default("free") // free, pro, enterprise
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+}
+
+// Usage tracking model
+model Usage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String   // e.g., "api_call", "export", "generation"
+  count     Int      @default(1)
+  metadata  Json?    // Additional data about the usage
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
