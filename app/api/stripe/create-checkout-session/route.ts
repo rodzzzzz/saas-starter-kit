@@ -1,29 +1,39 @@
-import { NextResponse } from "next/server"
-import { stripe, STRIPE_PLANS } from "@/lib/stripe"
-import { requireAuth } from "@/lib/clerk-helpers"
-import { getSubscription } from "@/lib/db-helpers"
+import { NextResponse } from "next/server";
+import { stripe, STRIPE_PLANS } from "@/lib/stripe";
+import { requireAuth } from "@/lib/clerk-helpers";
+import { getSubscription } from "@/lib/db-helpers";
 
 export async function POST(req: Request) {
   try {
-    const user = await requireAuth()
-    const { plan } = await req.json()
+    const user = await requireAuth();
+    const { plan } = await req.json();
 
-    if (!plan || !STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS]) {
-      return NextResponse.json({ error: "Invalid plan" }, { status: 400 })
+    if (!user.db) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const selectedPlan = STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS]
+    if (!plan || !STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS]) {
+      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+    }
+
+    const selectedPlan = STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS];
 
     if (!selectedPlan.priceId) {
-      return NextResponse.json({ error: "Plan not available for checkout" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Plan not available for checkout" },
+        { status: 400 }
+      );
     }
 
     // Check if user already has a subscription
-    const subscription = await getSubscription(user.db.id)
+    const subscription = await getSubscription(user.db.id);
 
     if (subscription?.stripeCustomerId) {
       // User already has a subscription, redirect to portal
-      return NextResponse.json({ error: "User already has a subscription" }, { status: 400 })
+      return NextResponse.json(
+        { error: "User already has a subscription" },
+        { status: 400 }
+      );
     }
 
     // Create Stripe checkout session
@@ -42,11 +52,14 @@ export async function POST(req: Request) {
         userId: user.db.id,
         plan,
       },
-    })
+    });
 
-    return NextResponse.json({ url: session.url })
+    return NextResponse.json({ url: session.url });
   } catch (error) {
-    console.error("Error creating checkout session:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error creating checkout session:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

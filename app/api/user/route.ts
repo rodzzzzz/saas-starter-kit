@@ -1,10 +1,14 @@
-import { NextResponse } from "next/server"
-import { requireAuth } from "@/lib/clerk-helpers"
-import { prisma } from "@/lib/prisma" // Declare the prisma variable
+import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/clerk-helpers";
+import { prisma } from "@/lib/prisma"; // Declare the prisma variable
 
 export async function GET() {
   try {
-    const user = await requireAuth()
+    const user = await requireAuth();
+
+    if (!user.db) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     return NextResponse.json({
       user: {
@@ -16,19 +20,23 @@ export async function GET() {
         imageUrl: user.db.imageUrl,
         subscription: user.db.subscription,
       },
-    })
+    });
   } catch (error) {
-    console.error("Error fetching user:", error)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    console.error("Error fetching user:", error);
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }
 
 export async function PATCH(req: Request) {
   try {
-    const user = await requireAuth()
-    const body = await req.json()
+    const user = await requireAuth();
+    const body = await req.json();
 
-    const { firstName, lastName } = body
+    if (!user.db) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { firstName, lastName } = body;
 
     // Update user in database
     const updatedUser = await prisma.user.update({
@@ -37,11 +45,14 @@ export async function PATCH(req: Request) {
         firstName,
         lastName,
       },
-    })
+    });
 
-    return NextResponse.json({ user: updatedUser })
+    return NextResponse.json({ user: updatedUser });
   } catch (error) {
-    console.error("Error updating user:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error updating user:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
