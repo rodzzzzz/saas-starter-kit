@@ -28,55 +28,60 @@ A production-ready SaaS starter template built with Next.js, Clerk, Stripe, Pris
 1. Clone the repository
 2. Install dependencies:
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 3. Set up environment variables:
 
 Copy `.env.example` to `.env` and fill in your credentials:
 
-\`\`\`bash
+```bash
 cp .env.example .env
-\`\`\`
+```
 
 4. Set up the database:
 
-\`\`\`bash
+```bash
 npx prisma generate
 npx prisma db push
-\`\`\`
+```
 
 5. Run the development server:
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 Open [http://localhost:3000](http://localhost:3000) to see your app.
 
 ## Environment Variables
 
 ### Database (Supabase)
+
 - `DATABASE_URL`: Your Supabase PostgreSQL connection string
+- `DIRECT_URL` : Your direct connection string used for migrations
 
 ### Clerk Authentication
+
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Clerk publishable key
 - `CLERK_SECRET_KEY`: Clerk secret key
 - `CLERK_WEBHOOK_SECRET`: Clerk webhook secret for user sync
 
 ### Stripe
+
 - `STRIPE_SECRET_KEY`: Stripe secret key
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Stripe publishable key
 - `STRIPE_WEBHOOK_SECRET`: Stripe webhook secret
 - `STRIPE_PRO_PRICE_ID`: Stripe price ID for Pro plan
 
 ### App Configuration
+
 - `NEXT_PUBLIC_APP_URL`: Your app URL (e.g., http://localhost:3000)
 
 ## Project Structure
 
-\`\`\`
+```
 ├── app/
 │   ├── api/                    # API routes
 │   │   ├── user/              # User management
@@ -108,41 +113,49 @@ Open [http://localhost:3000](http://localhost:3000) to see your app.
 │   └── schema.prisma          # Database schema
 └── scripts/
     └── init-database.sql      # Database initialization
-\`\`\`
+```
 
 ## API Routes
 
 ### User Management
+
 - `GET /api/user` - Get current user
 - `PATCH /api/user` - Update user profile
 
 ### Usage Tracking
+
 - `GET /api/usage` - Get user usage data
 - `POST /api/usage` - Track usage event
 
 ### Subscription
+
 - `GET /api/subscription` - Get subscription info
 
 ### Analytics
+
 - `GET /api/analytics` - Get analytics data
 
 ### Stripe
+
 - `POST /api/stripe/create-checkout-session` - Create checkout session
 - `POST /api/stripe/create-portal-session` - Create customer portal session
 
 ### Webhooks
+
 - `POST /api/webhooks/clerk` - Clerk user sync webhook
 - `POST /api/webhooks/stripe` - Stripe subscription webhook
 
 ## Webhooks Setup
 
 ### Clerk Webhook
+
 1. Go to Clerk Dashboard → Webhooks
 2. Add endpoint: `https://your-domain.com/api/webhooks/clerk`
 3. Subscribe to: `user.created`, `user.updated`, `user.deleted`
 4. Copy webhook secret to `CLERK_WEBHOOK_SECRET`
 
 ### Stripe Webhook
+
 1. Go to Stripe Dashboard → Developers → Webhooks
 2. Add endpoint: `https://your-domain.com/api/webhooks/stripe`
 3. Subscribe to: `checkout.session.completed`, `invoice.payment_succeeded`, `customer.subscription.updated`, `customer.subscription.deleted`

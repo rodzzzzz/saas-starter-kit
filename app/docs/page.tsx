@@ -128,7 +128,8 @@ export default function DocsPage() {
                         and fill in your credentials:
                       </p>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm space-y-1">
-                        <div>DATABASE_URL="xxxxxx"</div>
+                        <div>DATABASE_URL="postgresql://xxxxxx"</div>
+                        <div>DIRECT_URL="postgresql://xxxxxx"</div>
                         <br />
                         <div>
                           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxxxx
@@ -216,7 +217,7 @@ export default function DocsPage() {
                         routes require authentication.
                       </p>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm">
-                        <code>{`// middleware.ts
+                        <code className="whitespace-pre-wrap">{`// middleware.ts
 export default clerkMiddleware((auth, req) => {
   if (isProtectedRoute(req)) auth().protect()
 })`}</code>
@@ -226,7 +227,7 @@ export default clerkMiddleware((auth, req) => {
                     <div>
                       <h4 className="font-semibold mb-2">Get Current User</h4>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm">
-                        <code>{`import { getCurrentUser } from '@/lib/clerk-helpers'
+                        <code className="whitespace-pre-wrap">{`import { getCurrentUser } from '@/lib/clerk-helpers'
 
 const user = await getCurrentUser()`}</code>
                       </div>
@@ -264,7 +265,7 @@ const user = await getCurrentUser()`}</code>
                         Usage models:
                       </p>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm overflow-x-auto">
-                        <code>{`model User {
+                        <code className="whitespace-pre-wrap">{`model User {
   id            String         @id @default(cuid())
   clerkId       String         @unique
   email         String         @unique
@@ -280,7 +281,7 @@ const user = await getCurrentUser()`}</code>
                     <div>
                       <h4 className="font-semibold mb-2">Queries</h4>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm">
-                        <code>{`import { prisma } from '@/lib/prisma'
+                        <code className="whitespace-pre-wrap">{`import { prisma } from '@/lib/prisma'
 
 const user = await prisma.user.findUnique({
   where: { clerkId: userId },
@@ -335,7 +336,7 @@ const user = await prisma.user.findUnique({
                         Create Checkout Session
                       </h4>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm">
-                        <code>{`const response = await fetch('/api/stripe/create-checkout-session', {
+                        <code className="whitespace-pre-wrap">{`const response = await fetch('/api/stripe/create-checkout-session', {
   method: 'POST',
   body: JSON.stringify({ priceId: 'price_xxx' })
 })`}</code>
@@ -467,7 +468,7 @@ const user = await prisma.user.findUnique({
                         API routes include rate limiting to prevent abuse:
                       </p>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm">
-                        <code>{`import { rateLimit } from '@/lib/rate-limit'
+                        <code className="whitespace-pre-wrap">{`import { rateLimit } from '@/lib/rate-limit'
 
 const limiter = rateLimit({ interval: 60000, uniqueTokenPerInterval: 500 })
 await limiter.check(10, userId)`}</code>
@@ -480,7 +481,7 @@ await limiter.check(10, userId)`}</code>
                         Use the API client helper for type-safe requests:
                       </p>
                       <div className="bg-muted p-4 rounded-md font-mono text-sm">
-                        <code>{`import { apiClient } from '@/lib/api-client'
+                        <code className="whitespace-pre-wrap">{`import { apiClient } from '@/lib/api-client'
 
 const data = await apiClient.get('/api/user')`}</code>
                       </div>
