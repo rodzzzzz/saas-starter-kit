@@ -12,7 +12,7 @@ export const contentType = "image/png";
 // Image generation
 export default async function Icon() {
   const interBold = await readFile(
-    join(process.cwd(), "assets/Inter-Bold.ttf")
+    join(process.cwd(), "assets/Inter-Black.ttf")
   );
 
   return new ImageResponse(
@@ -26,20 +26,20 @@ export default async function Icon() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #000000 0%, #404040 100%)",
+          background: "#FFFFFF",
           borderRadius: "22%",
-          border: "2px solid #5c5c5c",
+          border: "4px solid #000000",
           position: "relative",
         }}
       >
         <div
           style={{
-            fontSize: 14,
-            color: "white",
+            fontSize: 20,
+            color: "#000000",
             letterSpacing: "-0.02em",
           }}
         >
-          SK
+          S
         </div>
       </div>
     ),
